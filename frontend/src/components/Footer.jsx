@@ -38,13 +38,13 @@ const Footer = () => {
         </div>
 
         {/* Links Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 py-12">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 py-12">
           <div>
             <div className="flex items-center gap-2 font-bold text-xl text-white mb-4">
               <Sparkles className="w-5 h-5 text-sky-400" /> AuraStore
             </div>
             <p className="text-sm text-slate-400">
-              Next-generation full-stack e-commerce marketplace powered by DRF and React.
+              Next-generation full-stack e-commerce marketplace.
             </p>
           </div>
           <div>
@@ -64,10 +64,6 @@ const Footer = () => {
               <li>Shipping Rates</li>
               <li>Contact Support</li>
             </ul>
-          </div>
-          <div>
-            <h5 className="font-semibold text-white text-sm mb-3">Technology</h5>
-            <p className="text-sm text-slate-400 mb-2">Built with Django 5 REST Framework, React (Vite), PostgreSQL & Docker Compose.</p>
           </div>
         </div>
 
