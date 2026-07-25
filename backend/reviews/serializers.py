@@ -2,7 +2,7 @@ from rest_framework import serializers
 from .models import Review
 
 class ReviewSerializer(serializers.ModelSerializer):
-    user_name = serializers.SerializerMethodGetter()
+    user_name = serializers.SerializerMethodField()
 
     class Meta:
         model = Review
