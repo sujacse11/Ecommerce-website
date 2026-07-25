@@ -79,14 +79,14 @@ if db_url and (db_url.startswith('postgres://') or db_url.startswith('postgresql
             ssl_require=True
         )
     }
-elif os.getenv('DB_ENGINE') == 'django.db.backends.postgresql':
+elif os.getenv('DB_ENGINE') == 'django.db.backends.postgresql' and os.getenv('DB_HOST') and os.getenv('DB_HOST') != 'db':
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql',
             'NAME': os.getenv('DB_NAME', 'ecommerce_db'),
             'USER': os.getenv('DB_USER', 'postgres'),
             'PASSWORD': os.getenv('DB_PASSWORD', 'postgres_password'),
-            'HOST': os.getenv('DB_HOST', 'db'),
+            'HOST': os.getenv('DB_HOST'),
             'PORT': os.getenv('DB_PORT', '5432'),
         }
     }
