@@ -22,7 +22,7 @@ jobs:
 
       - name: Install Frontend Dependencies & Build
         env:
-          VITE_API_BASE_URL: https://ecommerce-website.onrender.com/api/v1
+          VITE_API_BASE_URL: https://ecommerce-website-7q2i.onrender.com/api/v1
         run: |
           cd frontend
           npm ci || npm install
