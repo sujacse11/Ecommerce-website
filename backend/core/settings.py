@@ -70,8 +70,12 @@ TEMPLATES = [
 WSGI_APPLICATION = 'core.wsgi.application'
 
 # Database Configuration (PostgreSQL with SQLite fallback for quick validation)
-DB_ENGINE = os.getenv('DB_ENGINE', 'django.db.backends.sqlite3')
-if DB_ENGINE == 'django.db.backends.postgresql':
+db_url = os.getenv('DATABASE_URL', '').strip()
+if db_url and (db_url.startswith('postgres://') or db_url.startswith('postgresql://')):
+    DATABASES = {
+        'default': dj_database_url.config(default=db_url, conn_max_age=600)
+    }
+elif os.getenv('DB_ENGINE') == 'django.db.backends.postgresql':
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql',
@@ -82,8 +86,6 @@ if DB_ENGINE == 'django.db.backends.postgresql':
             'PORT': os.getenv('DB_PORT', '5432'),
         }
     }
-    if os.getenv('DATABASE_URL'):
-        DATABASES['default'] = dj_database_url.config(default=os.getenv('DATABASE_URL'))
 else:
     DATABASES = {
         'default': {
