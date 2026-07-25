@@ -75,7 +75,7 @@ if db_url and (db_url.startswith('postgres://') or db_url.startswith('postgresql
     DATABASES = {
         'default': dj_database_url.config(
             default=db_url,
-            conn_max_age=600,
+            conn_max_age=0,
             ssl_require=True
         )
     }
