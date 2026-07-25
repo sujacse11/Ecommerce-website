@@ -26,9 +26,8 @@ class Command(BaseCommand):
                 'is_email_verified': True
             }
         )
-        if _:
-            admin.set_password('Admin123!')
-            admin.save()
+        admin.set_password('Admin123!')
+        admin.save()
 
         seller, _ = User.objects.get_or_create(
             email='seller@ecommerce.com',
@@ -40,9 +39,8 @@ class Command(BaseCommand):
                 'is_email_verified': True
             }
         )
-        if _:
-            seller.set_password('Seller123!')
-            seller.save()
+        seller.set_password('Seller123!')
+        seller.save()
 
         customer, _ = User.objects.get_or_create(
             email='customer@ecommerce.com',
@@ -54,9 +52,8 @@ class Command(BaseCommand):
                 'is_email_verified': True
             }
         )
-        if _:
-            customer.set_password('Customer123!')
-            customer.save()
+        customer.set_password('Customer123!')
+        customer.save()
 
         # 2. Categories & Brands
         cat_elec, _ = Category.objects.get_or_create(name='Electronics', description='Gadgets & Hardware')
