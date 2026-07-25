@@ -49,7 +49,7 @@ const Orders = () => {
                     Status: {order.status}
                   </span>
                   <span className="text-xs font-semibold text-slate-600">
-                    Total: ${order.final_amount}
+                    Total: ₹{order.final_amount}
                   </span>
                 </div>
               </div>

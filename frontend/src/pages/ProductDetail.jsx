@@ -64,8 +64,8 @@ const ProductDetail = () => {
             </div>
 
             <div className="text-3xl font-extrabold text-slate-900 mb-6">
-              ${product.current_price}
-              {product.discount_price && <span className="text-lg text-slate-400 line-through ml-3">${product.price}</span>}
+              ₹{product.current_price}
+              {product.discount_price && <span className="text-lg text-slate-400 line-through ml-3">₹{product.price}</span>}
             </div>
 
             <p className="text-slate-600 text-sm leading-relaxed mb-6">{product.description}</p>

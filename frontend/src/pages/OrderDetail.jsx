@@ -86,9 +86,9 @@ const OrderDetail = () => {
             <div key={item.id} className="py-4 flex justify-between items-center">
               <div>
                 <div className="font-bold text-slate-800 text-sm">{item.product_details?.title}</div>
-                <div className="text-xs text-slate-500">${item.price} x {item.quantity}</div>
+                <div className="text-xs text-slate-500">₹{item.price} x {item.quantity}</div>
               </div>
-              <div className="font-bold text-slate-900 text-sm">${item.subtotal}</div>
+              <div className="font-bold text-slate-900 text-sm">₹{item.subtotal}</div>
             </div>
           ))}
         </div>

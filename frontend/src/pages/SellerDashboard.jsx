@@ -60,7 +60,7 @@ const SellerDashboard = () => {
           </div>
           <div>
             <div className="text-xs text-slate-500 font-semibold">Total Revenue</div>
-            <div className="text-2xl font-bold text-slate-900">${analytics?.metrics?.total_revenue || 0}</div>
+            <div className="text-2xl font-bold text-slate-900">₹{analytics?.metrics?.total_revenue || 0}</div>
           </div>
         </div>
       </div>

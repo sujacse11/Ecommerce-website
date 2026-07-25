@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { CreditCard, CheckCircle2, Tag } from 'lucide-react';
+import { CreditCard, CheckCircle2, ShieldCheck, X, Sparkles, Smartphone, ArrowRight } from 'lucide-react';
 import api from '../api/axios';
 import { CartContext } from '../context/CartContext';
 
@@ -14,6 +14,12 @@ const Checkout = () => {
   const [couponCode, setCouponCode] = useState('');
   const [discountPercent, setDiscountPercent] = useState(0);
   const [loading, setLoading] = useState(false);
+
+  // Razorpay / Payment Gateway Modal State
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const [createdOrder, setCreatedOrder] = useState(null);
+  const [paymentSuccess, setPaymentSuccess] = useState(false);
+  const [paymentProcessing, setPaymentProcessing] = useState(false);
 
   // Address form fields
   const [newAddress, setNewAddress] = useState({
@@ -77,20 +83,44 @@ const Checkout = () => {
       });
 
       const order = checkoutRes.data;
+      setCreatedOrder(order);
 
-      // Register payment method status
-      await api.post('/payments/process/', {
-        order_id: order.id,
-        payment_method: paymentMethod,
-      });
-
-      await clearCart();
-      navigate(`/orders/${order.id}`);
+      if (paymentMethod === 'COD') {
+        // Instant COD Completion
+        await api.post('/payments/process/', { order_id: order.id, payment_method: 'COD' });
+        await clearCart();
+        navigate(`/orders/${order.id}`);
+      } else {
+        // Open Interactive Gateway Modal for Razorpay / Stripe
+        setShowPaymentModal(true);
+      }
     } catch (err) {
       alert('Order checkout failed. Please try again.');
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleSimulatePaymentSuccess = async () => {
+    setPaymentProcessing(true);
+    setTimeout(async () => {
+      try {
+        await api.post('/payments/process/', {
+          order_id: createdOrder.id,
+          payment_method: paymentMethod,
+        });
+        setPaymentSuccess(true);
+        await clearCart();
+        setTimeout(() => {
+          setShowPaymentModal(false);
+          navigate(`/orders/${createdOrder.id}`);
+        }, 1800);
+      } catch (err) {
+        alert('Payment registration failed');
+      } finally {
+        setPaymentProcessing(false);
+      }
+    }, 1200);
   };
 
   if (!cart || cart.items.length === 0) {
@@ -197,8 +227,8 @@ const Checkout = () => {
           <div className="grid grid-cols-3 gap-4">
             {[
               { id: 'COD', label: 'Cash on Delivery', desc: 'Pay when delivered' },
+              { id: 'RAZORPAY', label: 'Razorpay / UPI', desc: 'UPI, Netbanking & Cards' },
               { id: 'STRIPE', label: 'Stripe Card', desc: 'Instant Credit/Debit' },
-              { id: 'RAZORPAY', label: 'Razorpay / UPI', desc: 'UPI & Netbanking' },
             ].map((m) => (
               <div
                 key={m.id}
@@ -238,17 +268,17 @@ const Checkout = () => {
         <div className="space-y-3 text-sm">
           <div className="flex justify-between text-slate-600">
             <span>Subtotal</span>
-            <span className="font-semibold">${subtotal.toFixed(2)}</span>
+            <span className="font-semibold">₹{subtotal.toFixed(2)}</span>
           </div>
           {discountPercent > 0 && (
             <div className="flex justify-between text-emerald-600 font-semibold">
               <span>Discount ({discountPercent}%)</span>
-              <span>-${discountAmount.toFixed(2)}</span>
+              <span>-₹{discountAmount.toFixed(2)}</span>
             </div>
           )}
           <div className="flex justify-between text-slate-900 font-extrabold text-lg pt-3 border-t border-slate-100">
             <span>Total to Pay</span>
-            <span className="text-sky-600">${finalTotal.toFixed(2)}</span>
+            <span className="text-sky-600">₹{finalTotal.toFixed(2)}</span>
           </div>
         </div>
 
@@ -257,9 +287,79 @@ const Checkout = () => {
           disabled={loading}
           className="w-full bg-sky-500 hover:bg-sky-600 text-white font-bold py-3.5 rounded-2xl shadow-lg shadow-sky-500/20 flex items-center justify-center gap-2 transition-all"
         >
-          {loading ? 'Processing Order...' : 'Confirm & Place Order'}
+          {loading ? 'Processing Order...' : paymentMethod === 'COD' ? 'Confirm & Place Order' : `Pay ₹${finalTotal.toFixed(2)} via ${paymentMethod}`}
         </button>
       </div>
+
+      {/* Interactive Razorpay / Stripe Payment Modal */}
+      {showPaymentModal && (
+        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-white w-full max-w-md rounded-3xl shadow-2xl overflow-hidden animate-in fade-in zoom-in-95">
+            {/* Gateway Header */}
+            <div className="bg-slate-900 text-white p-6 flex justify-between items-center">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-sky-500 flex items-center justify-center font-extrabold text-lg">
+                  {paymentMethod === 'RAZORPAY' ? 'R' : 'S'}
+                </div>
+                <div>
+                  <h4 className="font-bold text-sm">{paymentMethod === 'RAZORPAY' ? 'Razorpay Secure Payment' : 'Stripe Card Checkout'}</h4>
+                  <p className="text-xs text-sky-400 font-medium">Test Sandbox Mode</p>
+                </div>
+              </div>
+              <button onClick={() => setShowPaymentModal(false)} className="hover:opacity-70">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Modal Body */}
+            <div className="p-6 space-y-6">
+              {paymentSuccess ? (
+                <div className="py-8 text-center space-y-4">
+                  <CheckCircle2 className="w-16 h-16 text-emerald-500 mx-auto animate-bounce" />
+                  <h3 className="text-2xl font-extrabold text-slate-900">Payment Successful!</h3>
+                  <p className="text-xs text-slate-500">Redirecting to live Order Tracking Details...</p>
+                </div>
+              ) : (
+                <>
+                  <div className="bg-sky-50 p-4 rounded-2xl border border-sky-100 flex justify-between items-center">
+                    <span className="text-xs font-semibold text-sky-900">Total Amount Payable</span>
+                    <span className="text-xl font-extrabold text-sky-600">₹{finalTotal.toFixed(2)}</span>
+                  </div>
+
+                  {/* Dummy Card Details */}
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between text-xs font-bold text-slate-700">
+                      <span>Card Details (Pre-filled Dummy)</span>
+                      <span className="text-slate-400 flex items-center gap-1"><ShieldCheck className="w-3.5 h-3.5 text-emerald-500" /> 256-Bit Encrypted</span>
+                    </div>
+
+                    <div className="bg-slate-50 p-3.5 rounded-xl border border-slate-200 space-y-2">
+                      <div className="text-xs font-semibold text-slate-600">Card Number</div>
+                      <div className="font-mono text-sm font-bold text-slate-900 tracking-wider">4111 •••• •••• 1111</div>
+                      <div className="flex justify-between pt-2 text-xs text-slate-500 border-t border-slate-200">
+                        <span>Expiry: <strong>12/28</strong></span>
+                        <span>CVV: <strong>123</strong></span>
+                      </div>
+                    </div>
+
+                    <div className="text-[11px] text-slate-500 bg-slate-100 p-2.5 rounded-xl flex items-center gap-2">
+                      <Smartphone className="w-4 h-4 text-sky-600" /> UPI Test ID: <strong className="text-slate-800">success@razorpay</strong>
+                    </div>
+                  </div>
+
+                  <button
+                    onClick={handleSimulatePaymentSuccess}
+                    disabled={paymentProcessing}
+                    className="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-extrabold py-3.5 rounded-2xl shadow-lg shadow-emerald-500/20 flex items-center justify-center gap-2 transition-all"
+                  >
+                    {paymentProcessing ? 'Authorizing Payment...' : `Pay ₹${finalTotal.toFixed(2)} (Test Mode)`}
+                  </button>
+                </>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

@@ -91,7 +91,7 @@ const ChatbotWidget = () => {
                     {m.products.map((p) => (
                       <div key={p.id} className="bg-white p-2 border border-slate-200 rounded-xl text-xs flex justify-between">
                         <span className="font-semibold line-clamp-1">{p.title}</span>
-                        <span className="text-sky-600 font-bold">${p.price}</span>
+                        <span className="text-sky-600 font-bold">₹{p.price}</span>
                       </div>
                     ))}
                   </div>

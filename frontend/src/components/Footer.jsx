@@ -11,7 +11,7 @@ const Footer = () => {
             <Truck className="w-8 h-8 text-sky-400" />
             <div>
               <h4 className="text-sm font-semibold text-white">Free Express Delivery</h4>
-              <p className="text-xs text-slate-400">On all orders over $99</p>
+              <p className="text-xs text-slate-400">On all orders over ₹999</p>
             </div>
           </div>
           <div className="flex items-center gap-3">

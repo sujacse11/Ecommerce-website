@@ -41,7 +41,7 @@ const Cart = () => {
                 />
                 <div>
                   <h4 className="font-semibold text-slate-900 text-sm line-clamp-1">{item.product_details?.title}</h4>
-                  <div className="text-sky-600 font-bold text-sm">${item.product_details?.current_price}</div>
+                  <div className="text-sky-600 font-bold text-sm">₹{item.product_details?.current_price}</div>
                 </div>
               </div>
 
@@ -53,7 +53,7 @@ const Cart = () => {
                   onChange={(e) => updateQuantity(item.id, parseInt(e.target.value) || 1)}
                   className="w-16 border border-slate-200 rounded-lg p-1 text-center font-bold text-sm"
                 />
-                <div className="font-bold text-slate-900 text-sm min-w-[70px] text-right">${item.subtotal}</div>
+                <div className="font-bold text-slate-900 text-sm min-w-[70px] text-right">₹{item.subtotal}</div>
                 <button onClick={() => removeItem(item.id)} className="text-slate-400 hover:text-red-500">
                   <Trash2 className="w-4 h-4" />
                 </button>
@@ -70,7 +70,7 @@ const Cart = () => {
         <div className="space-y-3 text-sm">
           <div className="flex justify-between text-slate-600">
             <span>Subtotal</span>
-            <span className="font-semibold text-slate-900">${cart.total_price}</span>
+            <span className="font-semibold text-slate-900">₹{cart.total_price}</span>
           </div>
           <div className="flex justify-between text-slate-600">
             <span>Shipping Fee</span>
@@ -78,7 +78,7 @@ const Cart = () => {
           </div>
           <div className="flex justify-between text-slate-900 font-extrabold text-lg pt-3 border-t border-slate-100">
             <span>Total</span>
-            <span className="text-sky-600">${cart.total_price}</span>
+            <span className="text-sky-600">₹{cart.total_price}</span>
           </div>
         </div>
 

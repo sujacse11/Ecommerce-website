@@ -36,7 +36,7 @@ const AdminDashboard = () => {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         <div className="bg-white p-6 rounded-3xl border border-slate-100 space-y-2">
           <div className="text-xs text-slate-500 font-semibold">Total Platform Sales</div>
-          <div className="text-2xl font-extrabold text-slate-900">${analytics?.metrics?.total_sales || 0}</div>
+          <div className="text-2xl font-extrabold text-slate-900">₹{analytics?.metrics?.total_sales || 0}</div>
         </div>
         <div className="bg-white p-6 rounded-3xl border border-slate-100 space-y-2">
           <div className="text-xs text-slate-500 font-semibold">Total Orders Placed</div>
