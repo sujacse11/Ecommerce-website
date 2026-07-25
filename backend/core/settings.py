@@ -73,7 +73,11 @@ WSGI_APPLICATION = 'core.wsgi.application'
 db_url = os.getenv('DATABASE_URL', '').strip()
 if db_url and (db_url.startswith('postgres://') or db_url.startswith('postgresql://')):
     DATABASES = {
-        'default': dj_database_url.config(default=db_url, conn_max_age=600)
+        'default': dj_database_url.config(
+            default=db_url,
+            conn_max_age=600,
+            ssl_require=True
+        )
     }
 elif os.getenv('DB_ENGINE') == 'django.db.backends.postgresql':
     DATABASES = {

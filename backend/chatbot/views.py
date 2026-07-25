@@ -26,28 +26,34 @@ class AIChatbotView(APIView):
             })
 
         if 'track' in message or 'order status' in message:
-            if request.user.is_authenticated:
-                last_order = Order.objects.filter(user=request.user).order_by('-created_at').first()
-                if last_order:
-                    return Response({
-                        'response': f"Your latest Order #{last_order.id} is currently '{last_order.status}' with tracking number {last_order.tracking_number}."
-                    })
-                return Response({'response': 'You have no recent orders to track.'})
+            if request.user and request.user.is_authenticated:
+                try:
+                    last_order = Order.objects.filter(user=request.user).order_by('-created_at').first()
+                    if last_order:
+                        return Response({
+                            'response': f"Your latest Order #{last_order.id} is currently '{last_order.status}' with tracking number {last_order.tracking_number}."
+                        })
+                    return Response({'response': 'You have no recent orders to track.'})
+                except Exception:
+                    return Response({'response': 'Unable to retrieve order history at the moment.'})
             return Response({'response': 'Please log in to track your active orders.'})
 
-        if 'product' in message or 'recommend' in message or 'search' in message:
-            keywords = [w for w in message.split() if w not in ['search', 'recommend', 'product', 'for', 'a', 'the', 'show']]
-            query_filter = Q = Product.objects.filter(is_active=True)
-            if keywords:
-                query_filter = query_filter.filter(title__icontains=keywords[0])
-            items = query_filter[:4]
+        if 'product' in message or 'recommend' in message or 'search' in message or 'laptop' in message:
+            try:
+                keywords = [w for w in message.split() if w not in ['search', 'recommend', 'product', 'for', 'a', 'the', 'show']]
+                query_filter = Product.objects.filter(is_active=True)
+                if keywords:
+                    query_filter = query_filter.filter(title__icontains=keywords[0])
+                items = query_filter[:4]
 
-            if items.exists():
-                products_list = [{'id': p.id, 'title': p.title, 'price': str(p.price)} for p in items]
-                return Response({
-                    'response': f"Here are matching products from our catalog:",
-                    'products': products_list
-                })
+                if items.exists():
+                    products_list = [{'id': p.id, 'title': p.title, 'price': str(p.price)} for p in items]
+                    return Response({
+                        'response': f"Here are matching products from our catalog:",
+                        'products': products_list
+                    })
+            except Exception:
+                pass
 
         # 2. LLM Call Stub (OpenAI / Gemini fallback)
         openai_key = os.getenv('OPENAI_API_KEY')
