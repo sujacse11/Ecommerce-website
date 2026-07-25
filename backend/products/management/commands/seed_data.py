@@ -17,6 +17,7 @@ class Command(BaseCommand):
         admin, _ = User.objects.get_or_create(
             email='admin@ecommerce.com',
             defaults={
+                'username': 'admin@ecommerce.com',
                 'first_name': 'Admin',
                 'last_name': 'User',
                 'role': 'ADMIN',
@@ -32,6 +33,7 @@ class Command(BaseCommand):
         seller, _ = User.objects.get_or_create(
             email='seller@ecommerce.com',
             defaults={
+                'username': 'seller@ecommerce.com',
                 'first_name': 'TechStore',
                 'last_name': 'Official',
                 'role': 'SELLER',
@@ -45,6 +47,7 @@ class Command(BaseCommand):
         customer, _ = User.objects.get_or_create(
             email='customer@ecommerce.com',
             defaults={
+                'username': 'customer@ecommerce.com',
                 'first_name': 'John',
                 'last_name': 'Doe',
                 'role': 'CUSTOMER',

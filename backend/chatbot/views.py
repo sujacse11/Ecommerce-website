@@ -55,7 +55,27 @@ class AIChatbotView(APIView):
             except Exception:
                 pass
 
-        # 2. LLM Call Stub (OpenAI / Gemini fallback)
+        # 2. Groq LLM API Integration
+        groq_key = os.getenv('GROQ_API_KEY')
+        if groq_key and not groq_key.startswith('gsk_sample'):
+            try:
+                headers = {'Authorization': f'Bearer {groq_key}', 'Content-Type': 'application/json'}
+                payload = {
+                    'model': 'llama-3.3-70b-versatile',
+                    'messages': [
+                        {'role': 'system', 'content': 'You are an AI shopping assistant for AuraStore. Provide helpful, concise shopping advice.'},
+                        {'role': 'user', 'content': message}
+                    ],
+                    'max_tokens': 200
+                }
+                res = requests.post('https://api.groq.com/openai/v1/chat/completions', json=payload, headers=headers, timeout=5)
+                if res.status_code == 200:
+                    answer = res.json()['choices'][0]['message']['content']
+                    return Response({'response': answer})
+            except Exception:
+                pass
+
+        # 3. OpenAI LLM Fallback
         openai_key = os.getenv('OPENAI_API_KEY')
         if openai_key and not openai_key.startswith('sk-proj-sample'):
             try:
@@ -72,7 +92,7 @@ class AIChatbotView(APIView):
             except Exception:
                 pass
 
-        # 3. Default Fallback
+        # 4. Default Fallback
         return Response({
             'response': "I am your AI Shopping Assistant! I can help you find products, track active orders, answer return policies, or apply discount coupons. How can I assist you today?"
         })
